@@ -12,11 +12,12 @@
 /// * `quantity`: Path to the module where the [`quantity!`](macro.quantity.html) macro was run
 ///   (e.g. `uom::si::length`).
 /// * `$unit`: Unit name (e.g. `meter`, `foot`).
-/// * `$conversion`: Conversion (coefficient and constant factor) from the unit to the base unit of
-///   the quantity (e.g. `3.048_E-1` to convert `foot` to `meter`. `1.0_E0, 273.15_E0` to convert
-///   `celsius` to `kelvin`.). The coefficient is required and the constant factor is optional.
-///   Note that using a unit with a non-zero constant factor is not currently supported as a base
-///   unit.
+/// * `$conversion`: Conversion (coefficient; coefficient and constant; or coefficient, base, and
+///   scale) from the unit to the base unit of the quantity (e.g. `3.048_E-1` to convert `foot` to
+///   `meter`. `1.0_E0, 273.15_E0` to convert `celsius` to `kelvin`. `1.0_E0, 10.0_E0, 20.0_E0` to
+///   convert `decibel-volt` to `volt`). The coefficient is always required The constant factor or
+///   base and scale are optional. Note that using a unit with a non-zero constant factor, base, or
+///   scale is not currently supported as a base unit.
 /// * `$abbreviation`: Unit abbreviation (e.g. `"m"`).
 /// * `$singular`: Singular unit description (e.g. `"meter"`).
 /// * `$plural`: Plural unit description (e.g. `"meters"`).
@@ -160,13 +161,13 @@ macro_rules! unit {
                 }
 
                 #[inline(always)]
-                #[allow(unused_variables)]
+                //#[allow(unused_variables)]
                 fn base() -> Self::T {
                     unit!(@base $($conversion),+)
                 }
 
                 #[inline(always)]
-                #[allow(unused_variables)]
+                //#[allow(unused_variables)]
                 fn scale() -> Self::T {
                     unit!(@scale $($conversion),+)
                 }

@@ -18,8 +18,8 @@
 /// * `$conversion`: Conversion (coefficient and constant factor) from the unit to the base unit of
 ///   the quantity (e.g. `3.048_E-1` to convert `foot` to `meter`. `1.0_E0, 273.15_E0` to convert
 ///   `celsius` to `kelvin`.). The coefficient is required and the constant factor is optional.
-///   Note that using a unit with a non-zero constant factor is not currently supported as a base
-///   unit.
+///   Note that using a unit with a non-zero constant factor, base, or scale is not currently
+///   supported as a base unit.
 /// * `$abbreviation`: Unit abbreviation (e.g. `"m"`).
 /// * `$singular`: Singular unit description (e.g. `"meter"`).
 /// * `$plural`: Plural unit description (e.g. `"meters"`).

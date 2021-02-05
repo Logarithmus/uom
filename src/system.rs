@@ -1492,8 +1492,8 @@ macro_rules! system {
         /// * `$V`: Underlying value storage type (e.g. `f32`).
         /// * `$U`: Optional. Base units. Pass as a tuple with the desired units: `(meter, kilogram,
         ///   second, ampere, kelvin, mole, candela)`. The system's base units will be used if no
-        ///   value is provided. Note that a unit with a non-zero constant factor is not currently
-        ///   supported as a base unit.
+        ///   value is provided. Note that a unit with a non-zero constant factor, base, or scale
+        ///   is not currently supported as a base unit.
         ///
         /// An example invocation is given below for a meter-kilogram-second system setup in the
         /// module `mks` with a system of quantities name `Q`. The `#[macro_use]` attribute must be

@@ -399,8 +399,7 @@ pub enum ConstantOp {
 ///
 /// [units]: http://jcgm.bipm.org/vim/en/1.13.html
 /// [factor]: https://jcgm.bipm.org/vim/en/1.24.html
-pub trait Conversion<V> where
-    V: Conversion<V, T = Self::T> {
+pub trait Conversion<V> {
     /// Conversion factor type specific to the underlying storage type.
     type T: ConversionFactor<V>;
 
@@ -424,23 +423,27 @@ pub trait Conversion<V> where
         <Self::T as crate::num::Zero>::zero()
     }
 
+    /// TODO: DOCUMENTATION
     #[inline(always)]
-    #[allow(unused_variables)]
     fn base() -> Self::T {
         <Self::T as crate::num::One>::one()
     }
 
+    /// TODO: DOCUMENTATION
     #[inline(always)]
-    #[allow(unused_variables)]
     fn scale() -> Self::T {
         <Self::T as crate::num::One>::one()
     }
 
+    /// TODO: DOCUMENTATION
+    /// Self::T?
     #[inline(always)]
     fn into_linear(x: V) -> V {
         x
     }
 
+    /// TODO: DOCUMENTATION
+    /// Self::T?
     #[inline(always)]
     fn from_linear(x: V) -> V {
         x
@@ -476,14 +479,12 @@ pub trait ConversionFactor<V>:
     fn powi(self, e: i32) -> Self;
 
     /// Raises a `ConversionFactor<V>` to a power.
-    fn pow(self, v: V) -> V {
-        unimplemented!()
-    }
+    /// Self?
+    fn pow(self, v: V) -> V;
 
     /// Takes the log_`ConversionFactor<V>` of a value.
-    fn log(self, v: V) -> V {
-        unimplemented!()
-    }
+    /// Self?
+    fn log(self, v: V) -> V;
 
     /// Converts a `ConversionFactor<V>` into its underlying storage type.
     fn value(self) -> V;
@@ -536,17 +537,20 @@ storage_types! {
         }
 
         #[inline(always)]
-        fn value(self) -> V {
-            self
-        }
-
         fn pow(self, v: V) -> V {
+            //self.root(v_denom) ^ v_numer
             <V as crate::num::Float>::powf(self, v)
         }
 
         /// Takes the log_`ConversionFactor<V>` of a value.
+        #[inline(always)]
         fn log(self, v: V) -> V {
             <V as crate::num::Float>::log(self, v)
+        }
+
+        #[inline(always)]
+        fn value(self) -> V {
+            self
         }
     }
 }
