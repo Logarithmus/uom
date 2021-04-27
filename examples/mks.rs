@@ -3,8 +3,8 @@
 #[macro_use]
 extern crate uom;
 
-use crate::length::{foot, meter};
 use uom::fmt::DisplayStyle::Abbreviation;
+use uom::si::geometry::length::{foot, meter};
 
 fn main() {
     let l1 = f32::Length::new::<meter>(100.0);
@@ -67,15 +67,19 @@ mod time {
 
 system! {
     quantities: Q {
-        length: meter, L;
-        mass: kilogram, M;
-        time: second, T;
+        geometry::length: meter, L;
+        common::mass: kilogram, M;
+        common::time: second, T;
     }
 
     units: U {
-        mod length::Length,
-        mod mass::Mass,
-        mod time::Time,
+        geometry {
+            mod length::Length,
+        },
+        common {
+            mod mass::Mass,
+            mod time::Time,
+        },
     }
 }
 

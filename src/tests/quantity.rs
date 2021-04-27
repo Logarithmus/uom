@@ -57,27 +57,27 @@ storage_types! {
         fn add(l: A<V>, r: A<V>) -> bool {
             Test::approx_eq(&k::Length::new::<meter>(&*l + &*r),
                 &(k::Length::new::<meter>((*l).clone())
-                    + f::Length::new::<meter>((*r).clone())))
+                    + f::geometry::Length::new::<meter>((*r).clone())))
         }
 
         #[allow(trivial_casts)]
         fn sub(l: A<V>, r: A<V>) -> bool {
             Test::approx_eq(&k::Length::new::<meter>(&*l - &*r),
                 &(k::Length::new::<meter>((*l).clone())
-                    - f::Length::new::<meter>((*r).clone())))
+                    - f::geometry::Length::new::<meter>((*r).clone())))
         }
 
         #[allow(trivial_casts)]
         fn mul_quantity(l: A<V>, r: A<V>) -> bool {
             Test::approx_eq(&/*Area::new::<square_meter>*/(&*l * &*r),
-                    &(f::Length::new::<meter>((*l).clone())
+                    &(f::geometry::Length::new::<meter>((*l).clone())
                         * k::Length::new::<meter>((*r).clone())).value)
                 && Test::approx_eq(&/*Area::new::<square_meter>*/(&*l * &*r),
-                    &(f::Length::new::<meter>((*l).clone())
+                    &(f::geometry::Length::new::<meter>((*l).clone())
                         * k::Mass::new::<kilogram>((*r).clone())).value)
                 && Test::approx_eq(&/*Area::new::<square_kilometer>*/(&*l * &*r),
                     &(k::Length::new::<kilometer>((*l).clone())
-                        * f::Mass::new::<kilogram>((*r).clone())).value)
+                        * f::common::Mass::new::<kilogram>((*r).clone())).value)
         }
 
         #[allow(trivial_casts)]
@@ -90,7 +90,7 @@ storage_types! {
             TestResult::from_bool(
                 Test::approx_eq(&(&*l / &*r),
                     &(k::Length::new::<meter>((*l).clone())
-                        / f::Length::new::<meter>((*r).clone())).value))
+                        / f::geometry::Length::new::<meter>((*r).clone())).value))
         }
 
         #[allow(trivial_casts)]
@@ -102,16 +102,16 @@ storage_types! {
             TestResult::from_bool(
                 Test::approx_eq(&k::Length::new::<meter>(&*l % &*r),
                     &(k::Length::new::<meter>((*l).clone())
-                        % f::Length::new::<meter>((*r).clone()))))
+                        % f::geometry::Length::new::<meter>((*r).clone()))))
         }
 
         #[allow(trivial_casts)]
         fn eq(l: A<V>, r: A<V>) -> bool {
             let a = *l == *r;
-            let b = f::Length::new::<meter>((*l).clone())
+            let b = f::geometry::Length::new::<meter>((*l).clone())
                 == k::Length::new::<meter>((*r).clone());
             let c = k::Length::new::<meter>((*l).clone())
-                == f::Length::new::<meter>((*r).clone());
+                == f::geometry::Length::new::<meter>((*r).clone());
 
             a == b && a == c
         }
@@ -119,10 +119,10 @@ storage_types! {
         #[allow(trivial_casts)]
         fn ne(l: A<V>, r: A<V>) -> bool {
             let a = *l != *r;
-            let b = f::Length::new::<meter>((*l).clone())
+            let b = f::geometry::Length::new::<meter>((*l).clone())
                 != k::Length::new::<meter>((*r).clone());
             let c = k::Length::new::<meter>((*l).clone())
-                != f::Length::new::<meter>((*r).clone());
+                != f::geometry::Length::new::<meter>((*r).clone());
 
             a == b && a == c
         }
@@ -130,10 +130,10 @@ storage_types! {
         #[allow(trivial_casts)]
         fn partial_cmp(l: A<V>, r: A<V>) -> bool {
             let a = (*l).partial_cmp(&*r);
-            let b = f::Length::new::<meter>((*l).clone()).partial_cmp(
+            let b = f::geometry::Length::new::<meter>((*l).clone()).partial_cmp(
                 &k::Length::new::<meter>((*r).clone()));
             let c = k::Length::new::<meter>((*l).clone()).partial_cmp(
-                &f::Length::new::<meter>((*r).clone()));
+                &f::geometry::Length::new::<meter>((*r).clone()));
 
             a == b && a == c
         }
@@ -141,10 +141,10 @@ storage_types! {
         #[allow(trivial_casts)]
         fn lt(l: A<V>, r: A<V>) -> bool {
             let a = (*l).lt(&*r);
-            let b = f::Length::new::<meter>((*l).clone()).lt(
+            let b = f::geometry::Length::new::<meter>((*l).clone()).lt(
                 &k::Length::new::<meter>((*r).clone()));
             let c = k::Length::new::<meter>((*l).clone()).lt(
-                &f::Length::new::<meter>((*r).clone()));
+                &f::geometry::Length::new::<meter>((*r).clone()));
 
             a == b && a == c
         }
@@ -152,10 +152,10 @@ storage_types! {
         #[allow(trivial_casts)]
         fn le(l: A<V>, r: A<V>) -> bool {
             let a = (*l).le(&*r);
-            let b = f::Length::new::<meter>((*l).clone()).le(
+            let b = f::geometry::Length::new::<meter>((*l).clone()).le(
                 &k::Length::new::<meter>((*r).clone()));
             let c = k::Length::new::<meter>((*l).clone()).le(
-                &f::Length::new::<meter>((*r).clone()));
+                &f::geometry::Length::new::<meter>((*r).clone()));
 
             a == b && a == c
         }
@@ -163,10 +163,10 @@ storage_types! {
         #[allow(trivial_casts)]
         fn gt(l: A<V>, r: A<V>) -> bool {
             let a = (*l).gt(&*r);
-            let b = f::Length::new::<meter>((*l).clone()).gt(
+            let b = f::geometry::Length::new::<meter>((*l).clone()).gt(
                 &k::Length::new::<meter>((*r).clone()));
             let c = k::Length::new::<meter>((*l).clone()).gt(
-                &f::Length::new::<meter>((*r).clone()));
+                &f::geometry::Length::new::<meter>((*r).clone()));
 
             a == b && a == c
         }
@@ -174,10 +174,10 @@ storage_types! {
         #[allow(trivial_casts)]
         fn ge(l: A<V>, r: A<V>) -> bool {
             let a = (*l).ge(&*r);
-            let b = f::Length::new::<meter>((*l).clone()).ge(
+            let b = f::geometry::Length::new::<meter>((*l).clone()).ge(
                 &k::Length::new::<meter>((*r).clone()));
             let c = k::Length::new::<meter>((*l).clone()).ge(
-                &f::Length::new::<meter>((*r).clone()));
+                &f::geometry::Length::new::<meter>((*r).clone()));
 
             a == b && a == c
         }
@@ -191,7 +191,7 @@ mod fmt {
             test_format!($v, $specifier, ["", "+", "05"]);
         };
         ($v:expr, $specifier:expr, [$($option:expr),+]) => {
-            let m = f::Mass::new::<kilogram>((*$v).clone());
+            let m = f::common::Mass::new::<kilogram>((*$v).clone());
             let result = true;
 
             $(let result = result
@@ -225,12 +225,12 @@ mod fmt {
 
         #[test]
         fn round_trip() {
-            let l = f::Length::new::<meter>(V::one());
+            let l = f::geometry::Length::new::<meter>(V::one());
             let s1 = &format!("{}",
                 l.clone().into_format_args(kilometer, DisplayStyle::Abbreviation));
-            assert_eq!(s1.parse::<f::Length>(), Ok(l.clone()));
+            assert_eq!(s1.parse::<f::geometry::Length>(), Ok(l.clone()));
             let s2 = &format!("{}", l.clone().into_format_args(meter, DisplayStyle::Abbreviation));
-            assert_eq!(s2.parse::<f::Length>(), Ok(l.clone()));
+            assert_eq!(s2.parse::<f::geometry::Length>(), Ok(l.clone()));
         }
     }
 
@@ -307,7 +307,7 @@ mod non_big {
                 let mut v = k::Length::new::<meter>(*l);
 
                 f += *r;
-                v += f::Length::new::<meter>(*r);
+                v += f::geometry::Length::new::<meter>(*r);
 
                 Test::approx_eq(&k::Length::new::<meter>(f), &v)
             }
@@ -318,7 +318,7 @@ mod non_big {
                 let mut v = k::Length::new::<meter>(*l);
 
                 f -= *r;
-                v -= f::Length::new::<meter>(*r);
+                v -= f::geometry::Length::new::<meter>(*r);
 
                 Test::approx_eq(&k::Length::new::<meter>(f), &v)
             }
@@ -333,7 +333,7 @@ mod non_big {
                 let mut v = k::Length::new::<meter>(*l);
 
                 f %= *r;
-                v %= f::Length::new::<meter>(*r);
+                v %= f::geometry::Length::new::<meter>(*r);
 
                 TestResult::from_bool(Test::approx_eq(&k::Length::new::<meter>(f), &v))
             }
@@ -460,7 +460,7 @@ mod float {
             #[allow(trivial_casts)]
             fn hypot_same(l: V, r: V) -> bool {
                 Test::eq(&l.hypot(r),
-                    &f::Length::new::<meter>(l).hypot(f::Length::new::<meter>(r)).get::<meter>())
+                    &f::geometry::Length::new::<meter>(l).hypot(f::geometry::Length::new::<meter>(r)).get::<meter>())
             }
         }
 
@@ -469,9 +469,9 @@ mod float {
             #[allow(trivial_casts)]
             fn hypot_mixed(l: V, r: V) -> bool {
                 let fk = Test::approx_eq(&l.hypot(r),
-                    &f::Length::new::<meter>(l).hypot(k::Length::new::<meter>(r)).get::<meter>());
+                    &f::geometry::Length::new::<meter>(l).hypot(k::Length::new::<meter>(r)).get::<meter>());
                 let kf = Test::approx_eq(&l.hypot(r),
-                    &k::Length::new::<meter>(l).hypot(f::Length::new::<meter>(r)).get::<meter>());
+                    &k::Length::new::<meter>(l).hypot(f::geometry::Length::new::<meter>(r)).get::<meter>());
 
                 fk && kf
             }

@@ -28,54 +28,61 @@
 /// # fn main() { }
 /// # mod mks {
 /// #     #[macro_use]
-/// #     mod length {
-/// #         quantity! {
-/// #             /// Length (base unit meter, m).
-/// #             quantity: Length; "length";
-/// #             /// Length dimension, m.
-/// #             dimension: Q<P1 /*length*/, Z0 /*mass*/, Z0 /*time*/>;
-/// #             units {
-/// #                 @meter: 1.0E0; "m", "meter", "meters";
-/// #                 @foot: 3.048E-1; "ft", "foot", "feet";
+/// #     mod geometry {
+/// #         pub mod length {
+/// #             quantity! {
+/// #                 /// Length (base unit meter, m).
+/// #                 quantity: Length; "length";
+/// #                 /// Length dimension, m.
+/// #                 dimension: Q<P1 /*length*/, Z0 /*mass*/, Z0 /*time*/>;
+/// #                 units {
+/// #                     @meter: 1.0E0; "m", "meter", "meters";
+/// #                     @foot: 3.048E-1; "ft", "foot", "feet";
+/// #                 }
 /// #             }
 /// #         }
 /// #     }
 /// #     #[macro_use]
-/// #     mod mass {
-/// #         quantity! {
-/// #             /// Mass (base unit kilogram, kg).
-/// #             quantity: Mass; "mass";
-/// #             /// Mass dimension, kg.
-/// #             dimension: Q<Z0 /*length*/, P1 /*mass*/, Z0 /*time*/>;
-/// #             units {
-/// #                 @kilogram: 1.0; "kg", "kilogram", "kilograms";
+/// #     mod common {
+/// #         pub mod mass {
+/// #             quantity! {
+/// #                 /// Mass (base unit kilogram, kg).
+/// #                 quantity: Mass; "mass";
+/// #                 /// Mass dimension, kg.
+/// #                 dimension: Q<Z0 /*length*/, P1 /*mass*/, Z0 /*time*/>;
+/// #                 units {
+/// #                     @kilogram: 1.0; "kg", "kilogram", "kilograms";
+/// #                 }
 /// #             }
 /// #         }
-/// #     }
-/// #     #[macro_use]
-/// #     mod time {
-/// #         quantity! {
-/// #             /// Time (base unit second, s).
-/// #             quantity: Time; "time";
-/// #             /// Time dimension, s.
-/// #             dimension: Q<Z0 /*length*/, Z0 /*mass*/, P1 /*time*/>;
-/// #             units {
-/// #                 @second: 1.0; "s", "second", "seconds";
+/// #         pub mod time {
+/// #             quantity! {
+/// #                 /// Time (base unit second, s).
+/// #                 quantity: Time; "time";
+/// #                 /// Time dimension, s.
+/// #                 dimension: Q<Z0 /*length*/, Z0 /*mass*/, P1 /*time*/>;
+/// #                 units {
+/// #                     @second: 1.0; "s", "second", "seconds";
+/// #                 }
 /// #             }
 /// #         }
 /// #     }
 /// system! {
 ///     /// System of quantities, Q.
 ///     quantities: Q {
-///         length: meter, L;
-///         mass: kilogram, M;
-///         time: second, T;
+///         geometry::length: meter, L;
+///         common::mass: kilogram, M;
+///         common::time: second, T;
 ///     }
 ///     /// System of units, U.
 ///     units: U {
-///         mod length::Length,
-///         mod mass::Mass,
-///         mod time::Time,
+///     	geometry {
+///         	mod length::Length,
+///         },
+///         common {
+///         	mod mass::Mass,
+///         	mod time::Time,
+///         },
 ///     }
 /// }
 /// #     mod f32 {
@@ -87,32 +94,39 @@
 macro_rules! system {
     (
         $(#[$quantities_attr:meta])* quantities: $quantities:ident {
-            $($(#[$name_attr:meta])* $name:ident: $unit:ident, $symbol:ident;)+
+            $($(#[$name_attr:meta])* $cat:ident::$name:ident: $unit:ident, $symbol:ident;)+
         }
         $(#[$units_attr:meta])* units: $units:ident {
-            $($module:ident::$quantity:ident,)+
+			$($(#[$category_attr:meta])* $category:ident {
+            	$($module:ident::$quantity:ident,)+
+			},)+
         }
     ) => {
-        $(#[macro_use]
-        pub mod $module;)+
+        $($(#[$category_attr])*
+		#[macro_use]
+        pub mod $category;)+
 
         system! {
             $(#[$quantities_attr])*
             quantities: $quantities {
-                $($(#[$name_attr])* $name: $unit, $symbol;)+
+                $($(#[$name_attr])* $cat::$name: $unit, $symbol;)+
             }
             $(#[$units_attr])*
             units: $units {
-                $(mod $module::$quantity,)+
+				$($category {
+                	$(mod $module::$quantity,)+
+				},)+
             }
         }
     };
     (
         $(#[$quantities_attr:meta])* quantities: $quantities:ident {
-            $($(#[$name_attr:meta])* $name:ident: $unit:ident, $symbol:ident;)+
+            $($(#[$name_attr:meta])* $cat:ident::$name:ident: $unit:ident, $symbol:ident;)+
         }
         $(#[$units_attr:meta])* units: $units:ident {
-            $(mod $module:ident::$quantity:ident,)+
+			$($(#[$category_attr:meta])* $category:ident {
+            	$(mod $module:ident::$quantity:ident,)+
+			},)+
         }
     ) => {
         /// Marker trait to express the dependence of a [quantity][quantity] on the
@@ -289,7 +303,7 @@ macro_rules! system {
         /// ## Generic Parameters
         /// * `V`: Underlying storage type.
         #[allow(unused_qualifications)]
-        pub type $units<V> = dyn Units<V, $($name = $name::$unit),+>;
+        pub type $units<V> = dyn Units<V, $($name = $cat::$name::$unit),+>;
 
         /// Convert a value from base units to the given unit.
         ///
@@ -1580,45 +1594,51 @@ macro_rules! system {
         #[macro_export]
         macro_rules! $quantities {
             ($path:path) => {
-                use $path as __system;
+                $(#[allow(missing_docs)]
+				pub mod $category {
+                	use $path as __system;
 
-                $(/// [`Quantity`](struct.Quantity.html) type alias using the default base units
-                /// parameterized on the underlying storage type.
-                ///
-                /// ## Generic Parameters
-                /// * `V`: Underlying storage type.
-                #[allow(dead_code)]
-                #[allow(unused_qualifications)]
-                pub type $quantity<V> = __system::$module::$quantity<__system::$units<V>, V>;)+
+					$(/// [`Quantity`](struct.Quantity.html) type alias using the default base units
+                	/// parameterized on the underlying storage type.
+                	///
+                	/// ## Generic Parameters
+                	/// * `V`: Underlying storage type.
+                	#[allow(dead_code)]
+                	#[allow(unused_qualifications)]
+                	pub type $quantity<V> = __system::$category::$module::$quantity<__system::$units<V>, V>;)+
+				})+
             };
             ($path:path, $V:ty) => {
-                use $path as __system;
+                $(#[allow(missing_docs)]
+				pub mod $category {
+                	use $path as __system;
 
-                $(/// [`Quantity`](struct.Quantity.html) type alias using the default base units.
-                #[allow(dead_code)]
-                #[allow(unused_qualifications)]
-                pub type $quantity = __system::$module::$quantity<__system::$units<$V>, $V>;)+
+					$(/// [`Quantity`](struct.Quantity.html) type alias using the default base units.
+                	#[allow(dead_code)]
+                	#[allow(unused_qualifications)]
+                	pub type $quantity = __system::$category::$module::$quantity<__system::$units<$V>, $V>;)+
+				})+
             };
             ($path:path, $V:ty, $U:tt) => {
-                system!(@quantities $path, $V; $($name),+; $U; $($module::$quantity),+);
+                system!(@quantities $path, $V; $($cat::$name),+; $U; $($($category::$module::$quantity),+)+);
             };
         }
     };
     (
         @quantities $path:path,
         $V:ty;
-        $($name:ident),+;
+        $($cat:ident::$name:ident),+;
         ($($U:ident),+);
-        $($module:ident::$quantity:ident),+
+        $($($category:ident::$module:ident::$quantity:ident),+)+
     ) => {
         use $path as __system;
 
-        type Units = dyn __system::Units<$V, $($name = __system::$name::$U,)+>;
+        type Units = dyn __system::Units<$V, $($name = __system::$cat::$name::$U,)+>;
 
-        $(/// [`Quantity`](struct.Quantity.html) type alias using the given base units.
+        $($(/// [`Quantity`](struct.Quantity.html) type alias using the given base units.
         #[allow(dead_code)]
         #[allow(unused_qualifications)]
-        pub type $quantity = __system::$module::$quantity<Units, $V>;)+
+        pub type $quantity = __system::$category::$module::$quantity<Units, $V>;)+)+
     };
     (@replace $_t:tt $sub:ty) => { $sub };
 }

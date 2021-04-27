@@ -2,152 +2,158 @@
 
 storage_types! {
     use crate::tests::*;
+    use crate::tests::{
+		geometry::length,
+		thermal::thermodynamic_temperature,
+	};
+	use crate::tests::system::f32::geometry::Length;
+	use crate::tests::system::f32::V as V32;
 
-    type MeterKelvinBase = dyn Units<V, length = meter, mass = kilogram,
+    type MeterKelvinBase = dyn Units<V32, length = meter, mass = kilogram,
         thermodynamic_temperature = kelvin>;
-    type KilometerFahrenheitBase = dyn Units<V, length = kilometer, mass = kilogram,
+    type KilometerFahrenheitBase = dyn Units<V32, length = kilometer, mass = kilogram,
         thermodynamic_temperature = degree_fahrenheit>;
 
-    Q!(crate::tests, V);
+    Q!(crate::tests, crate::tests::system::f32::V);
 
     #[test]
     fn zero() {
         let z = Length::zero();
 
-        Test::assert_eq(&V::zero(), &z.value);
+        Test::assert_eq(&V32::zero(), &z.value);
         assert!(z.is_zero());
     }
 
     quickcheck! {
         #[allow(trivial_casts)]
-        fn from_base(v: A<V>) -> bool
+        fn from_base(v: A<V32>) -> bool
         {
-            let km: V = <kilometer as crate::Conversion<V>>::coefficient().value();
-            let f_coefficient: V =
-                <degree_fahrenheit as crate::Conversion<V>>::coefficient().value();
-            let f_constant: V =
-                <degree_fahrenheit as crate::Conversion<V>>::constant(ConstantOp::Add).value();
+            let km: V32 = <kilometer as crate::Conversion<V32>>::coefficient().value();
+            let f_coefficient: V32 =
+                <degree_fahrenheit as crate::Conversion<V32>>::coefficient().value();
+            let f_constant: V32 =
+                <degree_fahrenheit as crate::Conversion<V32>>::constant(ConstantOp::Add).value();
 
             // meter -> meter.
             Test::approx_eq(&*v,
-                    &crate::tests::from_base::<length::Dimension, MeterKelvinBase, V, meter>(&*v))
+                    &crate::tests::from_base::<length::Dimension, MeterKelvinBase, V32, meter>(&*v))
                 // kilometer -> kilometer.
                 && Test::approx_eq(&*v,
-                    &crate::tests::from_base::<length::Dimension, KilometerFahrenheitBase, V, kilometer>(
+                    &crate::tests::from_base::<length::Dimension, KilometerFahrenheitBase, V32, kilometer>(
                         &*v))
                 // meter -> kilometer.
                 && Test::approx_eq(&(&*v / &km),
-                    &crate::tests::from_base::<length::Dimension, MeterKelvinBase, V, kilometer>(
+                    &crate::tests::from_base::<length::Dimension, MeterKelvinBase, V32, kilometer>(
                         &*v))
                 // kilometer -> meter.
                 && Test::approx_eq(&(&*v * &km),
-                    &crate::tests::from_base::<length::Dimension, KilometerFahrenheitBase, V, meter>(
+                    &crate::tests::from_base::<length::Dimension, KilometerFahrenheitBase, V32, meter>(
                         &*v))
                 // kelvin -> kelvin.
                 && Test::approx_eq(&*v,
-                    &crate::tests::from_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V, kelvin>(
+                    &crate::tests::from_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V32, kelvin>(
                         &*v))
                 // fahrenheit -> fahrenheit.
                 // && Test::approx_eq(&*v,
-                //     &crate::tests::from_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V, degree_fahrenheit>(
+                //     &crate::tests::from_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V32, degree_fahrenheit>(
                 //         &*v))
                 // kelvin -> fahrenheit.
                 && Test::approx_eq(&(&*v / &f_coefficient - &f_constant),
-                    &crate::tests::from_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V, degree_fahrenheit>(
+                    &crate::tests::from_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V32, degree_fahrenheit>(
                         &*v))
                 // fahrenheit -> kelvin.
                 // && Test::approx_eq(&(&(&*v + &f_constant) * &f_coefficient),
-                //     &crate::tests::from_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V, kelvin>(
+                //     &crate::tests::from_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V32, kelvin>(
                 //         &*v))
         }
 
         #[allow(trivial_casts)]
-        fn to_base(v: A<V>) -> bool
+        fn to_base(v: A<V32>) -> bool
         {
-            let km: V = <kilometer as crate::Conversion<V>>::coefficient().value();
-            let f_coefficient: V =
-                <degree_fahrenheit as crate::Conversion<V>>::coefficient().value();
-            let f_constant: V =
-                <degree_fahrenheit as crate::Conversion<V>>::constant(ConstantOp::Add).value();
+            let km: V32 = <kilometer as crate::Conversion<V32>>::coefficient().value();
+            let f_coefficient: V32 =
+                <degree_fahrenheit as crate::Conversion<V32>>::coefficient().value();
+            let f_constant: V32 =
+                <degree_fahrenheit as crate::Conversion<V32>>::constant(ConstantOp::Add).value();
 
             // meter -> meter.
             Test::approx_eq(&*v,
-                    &crate::tests::to_base::<length::Dimension, MeterKelvinBase, V, meter>(&*v))
+                    &crate::tests::to_base::<length::Dimension, MeterKelvinBase, V32, meter>(&*v))
                 // kilometer -> kilometer.
                 && Test::approx_eq(&*v,
-                    &crate::tests::to_base::<length::Dimension, KilometerFahrenheitBase, V, kilometer>(
+                    &crate::tests::to_base::<length::Dimension, KilometerFahrenheitBase, V32, kilometer>(
                         &*v))
                 // kilometer -> meter.
                 && Test::approx_eq(&(&*v * &km),
-                    &crate::tests::to_base::<length::Dimension, MeterKelvinBase, V, kilometer>(&*v))
+                    &crate::tests::to_base::<length::Dimension, MeterKelvinBase, V32, kilometer>(&*v))
                 // meter -> kilometer.
                 && Test::approx_eq(&(&*v / &km),
-                    &crate::tests::to_base::<length::Dimension, KilometerFahrenheitBase, V, meter>(
+                    &crate::tests::to_base::<length::Dimension, KilometerFahrenheitBase, V32, meter>(
                         &*v))
                 // kelvin -> kelvin.
                 && Test::approx_eq(&*v,
-                    &crate::tests::to_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V, kelvin>(
+                    &crate::tests::to_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V32, kelvin>(
                         &*v))
                 // fahrenheit -> fahrenheit.
                 // && Test::approx_eq(&*v,
-                //     &crate::tests::to_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V, degree_fahrenheit>(
+                //     &crate::tests::to_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V32, degree_fahrenheit>(
                 //         &*v))
                 // fahrenheit -> kelvin.
                 && Test::approx_eq(&(&(&*v + &f_constant) * &f_coefficient),
-                    &crate::tests::to_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V, degree_fahrenheit>(
+                    &crate::tests::to_base::<thermodynamic_temperature::Dimension, MeterKelvinBase, V32, degree_fahrenheit>(
                         &*v))
                 // kelvin -> fahrenheit.
                 // && Test::approx_eq(&(&*v / &f_coefficient - &f_constant),
-                //     &crate::tests::to_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V, kelvin>(
+                //     &crate::tests::to_base::<thermodynamic_temperature::Dimension, KilometerFahrenheitBase, V32, kelvin>(
                 //         &*v))
         }
 
         #[allow(trivial_casts)]
-        fn change_base(v: A<V>) -> bool
+        fn change_base(v: A<V32>) -> bool
         {
-            let km: V = <kilometer as crate::Conversion<V>>::coefficient().value();
+            let km: V32 = <kilometer as crate::Conversion<V32>>::coefficient().value();
 
             // meter -> meter.
             Test::approx_eq(&*v,
-                    &crate::tests::change_base::<length::Dimension, MeterKelvinBase, MeterKelvinBase, V>(
+                    &crate::tests::change_base::<length::Dimension, MeterKelvinBase, MeterKelvinBase, V32>(
                         &*v))
                 // kilometer -> kilometer.
                 && Test::approx_eq(&*v,
-                    &crate::tests::change_base::<length::Dimension, KilometerFahrenheitBase, KilometerFahrenheitBase, V>(
+                    &crate::tests::change_base::<length::Dimension, KilometerFahrenheitBase, KilometerFahrenheitBase, V32>(
                         &*v))
                 // kilometer -> meter.
                 && Test::approx_eq(&(&*v * &km),
-                    &crate::tests::change_base::<length::Dimension, MeterKelvinBase, KilometerFahrenheitBase, V>(
+                    &crate::tests::change_base::<length::Dimension, MeterKelvinBase, KilometerFahrenheitBase, V32>(
                         &*v))
                 // meter -> kilometer.
                 && Test::approx_eq(&(&*v / &km),
-                    &crate::tests::change_base::<length::Dimension, KilometerFahrenheitBase, MeterKelvinBase, V>(
+                    &crate::tests::change_base::<length::Dimension, KilometerFahrenheitBase, MeterKelvinBase, V32>(
                         &*v))
         }
 
         #[allow(trivial_casts)]
-        fn add(l: A<V>, r: A<V>) -> bool {
+        fn add(l: A<V32>, r: A<V32>) -> bool {
             Test::eq(&Length::new::<meter>(&*l + &*r),
                 &(Length::new::<meter>((*l).clone())
                     + Length::new::<meter>((*r).clone())))
         }
 
         #[allow(trivial_casts)]
-        fn sub(l: A<V>, r: A<V>) -> bool {
+        fn sub(l: A<V32>, r: A<V32>) -> bool {
             Test::eq(&Length::new::<meter>(&*l - &*r),
                 &(Length::new::<meter>((*l).clone())
                     - Length::new::<meter>((*r).clone())))
         }
 
         #[allow(trivial_casts)]
-        fn mul_quantity(l: A<V>, r: A<V>) -> bool {
+        fn mul_quantity(l: A<V32>, r: A<V32>) -> bool {
             Test::eq(&/*Area::new::<square_meter>*/(&*l * &*r),
                 &(Length::new::<meter>((*l).clone())
                     * Length::new::<meter>((*r).clone())).value)
         }
 
         #[allow(trivial_casts)]
-        fn mul_v(l: A<V>, r: A<V>) -> bool {
+        fn mul_v(l: A<V32>, r: A<V32>) -> bool {
             Test::eq(&Length::new::<meter>(&*l * &*r),
                     &(Length::new::<meter>((*l).clone()) * (*r).clone()))
                 && Test::eq(&Length::new::<meter>(&*l * &*r),
@@ -242,6 +248,10 @@ mod prim_int {
         types: PrimInt;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 
@@ -268,6 +278,10 @@ mod float {
         types: Float;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 
@@ -406,6 +420,10 @@ mod signed {
         types: Signed;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 
@@ -436,6 +454,10 @@ mod non_ratio {
         types: PrimInt, BigInt, BigUint, Float;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 
@@ -451,6 +473,10 @@ mod non_big {
         types: PrimInt, Rational, Rational32, Rational64, Float;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 
@@ -526,6 +552,10 @@ mod primitive {
         types: Float, PrimInt;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 
@@ -568,6 +598,10 @@ mod fixed {
         types: PrimInt, BigInt, BigUint, Ratio;
 
         use crate::tests::*;
+    	use crate::tests::{
+			geometry::length::{self, Length},
+			thermal::thermodynamic_temperature
+		};
 
         Q!(crate::tests, V);
 

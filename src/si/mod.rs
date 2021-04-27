@@ -22,83 +22,116 @@ system! {
     quantities: ISQ {
         /// Length, one of the base quantities in the ISQ, denoted by the symbol L. The base unit
         /// for length is meter in the SI.
-        length: meter, L;
+        geometry::length: meter, L;
         /// Mass, one of the base quantities in the ISQ, denoted by the symbol M. The base unit
         /// for mass is kilogram in the SI.
-        mass: kilogram, M;
+        common::mass: kilogram, M;
         /// Time, one of the base quantities in the ISQ, denoted by the symbol T. The base unit
         /// for time is second in the SI.
-        time: second, T;
+        common::time: second, T;
         /// Electric current, one of the base quantities in the ISQ, denoted by the symbol I. The
         /// base unit for electric current is ampere in the SI.
-        electric_current: ampere, I;
+        electricity::electric_current: ampere, I;
         /// Thermodynamic temperature, one of the base quantities in the ISQ, denoted by the symbol
         /// Th (Θ). The base unit for thermodynamic temperature is kelvin in the SI.
-        thermodynamic_temperature: kelvin, Th;
+        thermal::thermodynamic_temperature: kelvin, Th;
         /// Amount of substance, one of the base quantities in the ISQ, denoted by the symbol N.
         /// The base unit for amount of substance is mole in the SI.
-        amount_of_substance: mole, N;
+        chemistry::amount_of_substance: mole, N;
         /// Luminous intensity, one of the base quantities in the ISQ, denoted by the symbol J. The
         /// base unit for luminous intensity is candela in the SI.
-        luminous_intensity: candela, J;
+        optics::luminous_intensity: candela, J;
     }
 
     /// [International System of Units](http://jcgm.bipm.org/vim/en/1.16.html) (SI).
     units: SI {
-        acceleration::Acceleration,
-        amount_of_substance::AmountOfSubstance,
-        angle::Angle,
-        angular_acceleration::AngularAcceleration,
-        angular_jerk::AngularJerk,
-        angular_velocity::AngularVelocity,
-        area::Area,
-        available_energy::AvailableEnergy,
-        capacitance::Capacitance,
-        catalytic_activity::CatalyticActivity,
-        catalytic_activity_concentration::CatalyticActivityConcentration,
-        curvature::Curvature,
-        electric_charge::ElectricCharge,
-        electric_current::ElectricCurrent,
-        electric_potential::ElectricPotential,
-        electrical_conductance::ElectricalConductance,
-        electrical_resistance::ElectricalResistance,
-        energy::Energy,
-        force::Force,
-        frequency::Frequency,
-        heat_capacity::HeatCapacity,
-        heat_flux_density::HeatFluxDensity,
-        heat_transfer::HeatTransfer,
-        inductance::Inductance,
-        information::Information,
-        information_rate::InformationRate,
-        jerk::Jerk,
-        length::Length,
-        luminance::Luminance,
-        luminous_intensity::LuminousIntensity,
-        magnetic_flux::MagneticFlux,
-        magnetic_flux_density::MagneticFluxDensity,
-        mass::Mass,
-        mass_concentration::MassConcentration,
-        mass_density::MassDensity,
-        mass_rate::MassRate,
-        molar_concentration::MolarConcentration,
-        molar_energy::MolarEnergy,
-        molar_mass::MolarMass,
-        momentum::Momentum,
-        power::Power,
-        pressure::Pressure,
-        ratio::Ratio,
-        specific_heat_capacity::SpecificHeatCapacity,
-        solid_angle::SolidAngle,
-        radiant_exposure::RadiantExposure,
-        temperature_interval::TemperatureInterval,
-        thermal_conductivity::ThermalConductivity,
-        thermodynamic_temperature::ThermodynamicTemperature,
-        time::Time,
-        torque::Torque,
-        velocity::Velocity,
-        volume::Volume,
-        volume_rate::VolumeRate,
+        /// Commonly used quantities
+        common {
+            mass::Mass,
+            mass_concentration::MassConcentration,
+            mass_density::MassDensity,
+            mass_rate::MassRate,
+            time::Time,
+            frequency::Frequency,
+        },
+        /// Kinematic quantities
+        kinematics {
+            angular_acceleration::AngularAcceleration,
+            angular_jerk::AngularJerk,
+            angular_velocity::AngularVelocity,
+            jerk::Jerk,
+            momentum::Momentum,
+            velocity::Velocity,
+            acceleration::Acceleration,
+        },
+        /// Chemical quantities
+        chemistry {
+            amount_of_substance::AmountOfSubstance,
+            catalytic_activity::CatalyticActivity,
+            catalytic_activity_concentration::CatalyticActivityConcentration,
+            molar_concentration::MolarConcentration,
+            molar_energy::MolarEnergy,
+            molar_mass::MolarMass,
+        },
+        /// Dynamic quantities
+        dynamics {
+            force::Force,
+            pressure::Pressure,
+            torque::Torque,
+        },
+        /// Electric quantities
+        electricity {
+            capacitance::Capacitance,
+            electric_charge::ElectricCharge,
+            electric_current::ElectricCurrent,
+            electric_potential::ElectricPotential,
+            electrical_conductance::ElectricalConductance,
+            electrical_resistance::ElectricalResistance,
+        },
+        /// Energy related quantities
+        energy {
+            energy::Energy,
+            available_energy::AvailableEnergy,
+            power::Power,
+            radiant_exposure::RadiantExposure,
+        },
+        /// Geometric quantities
+        geometry {
+            angle::Angle,
+            area::Area,
+            curvature::Curvature,
+            length::Length,
+            ratio::Ratio,
+            solid_angle::SolidAngle,
+            volume::Volume,
+            volume_rate::VolumeRate,
+        },
+        /// Informational quantities
+        information {
+            information::Information,
+            information_rate::InformationRate,
+        },
+        /// Magnetic quantities
+        magnetism {
+            inductance::Inductance,
+            magnetic_flux::MagneticFlux,
+            magnetic_flux_density::MagneticFluxDensity,
+        },
+        /// Optical quantities
+        optics {
+            luminance::Luminance,
+            luminous_intensity::LuminousIntensity,
+        },
+        /// Thermal quantities
+        thermal {
+            heat_capacity::HeatCapacity,
+            heat_flux_density::HeatFluxDensity,
+            heat_transfer::HeatTransfer,
+            specific_heat_capacity::SpecificHeatCapacity,
+            temperature_interval::TemperatureInterval,
+            thermal_conductivity::ThermalConductivity,
+            thermodynamic_temperature::ThermodynamicTemperature,
+        },
     }
 }
 
@@ -112,7 +145,7 @@ storage_types! {
     /// [`Quantity`](struct.Quantity.html) type aliases using the default base units.
     pub types: All;
 
-    ISQ!(crate::si, V);
+    ISQ!(crate::si, crate::si::f32::V);
 }
 
 /// Primitive traits and types representing basic properties of types specific to the SI.
