@@ -68,76 +68,77 @@ fn units() {
 
 storage_types! {
     use crate::tests::*;
-	use crate::tests::{geometry::length::Length, common::mass::Mass};
+	use crate::tests::quantities::f32::{geometry::Length, common::Mass};
+	use crate::tests::quantities::f32::V as V32;
 
-    Q!(crate::tests, V);
+    Q!(crate::tests, super::quantities::f32::V);
 
     #[test]
     fn struct_literal() {
-        let l = Length { dimension: PhantomData, units: PhantomData, value: V::one(), };
-        let m = Mass { dimension: PhantomData, units: PhantomData, value: V::one(), };
+        let l = Length { dimension: PhantomData, units: PhantomData, value: V32::one(), };
+        let m = Mass { dimension: PhantomData, units: PhantomData, value: V32::one(), };
 
-        Test::assert_eq(&V::one(), &l.value);
-        Test::assert_eq(&V::one(), &m.value);
+        Test::assert_eq(&V32::one(), &l.value);
+        Test::assert_eq(&V32::one(), &m.value);
     }
 
     #[test]
     fn new() {
-        let l1 = Length::new::<kilometer>(V::one());
-        let l2 = Length::new::<meter>(V::one());
-        let m1 = Mass::new::<kilogram>(V::one());
+        let l1 = Length::new::<kilometer>(V32::one());
+        let l2 = Length::new::<meter>(V32::one());
+        let m1 = Mass::new::<kilogram>(V32::one());
 
-        Test::assert_eq(&V::from_f64(1000.0).unwrap(), &l1.value);
-        Test::assert_eq(&V::one(), &l2.value);
-        Test::assert_eq(&V::one(), &m1.value);
+        Test::assert_eq(&V32::from_f64(1000.0).unwrap(), &l1.value);
+        Test::assert_eq(&V32::one(), &l2.value);
+        Test::assert_eq(&V32::one(), &m1.value);
     }
 
     #[test]
     fn get() {
-        let l1 = Length::new::<kilometer>(V::one());
-        let l2 = Length::new::<meter>(V::one());
-        let m1 = Mass::new::<kilogram>(V::one());
+        let l1 = Length::new::<kilometer>(V32::one());
+        let l2 = Length::new::<meter>(V32::one());
+        let m1 = Mass::new::<kilogram>(V32::one());
 
-        Test::assert_eq(&V::from_f64(1000.0).unwrap(), &l1.get::<meter>());
-        Test::assert_eq(&V::one(), &l2.get::<meter>());
-        Test::assert_eq(&V::one(), &l1.get::<kilometer>());
-        Test::assert_eq(&V::from_f64(0.001).unwrap(), &l2.get::<kilometer>());
-        Test::assert_eq(&V::one(), &m1.get::<kilogram>());
+        Test::assert_eq(&V32::from_f64(1000.0).unwrap(), &l1.get::<meter>());
+        Test::assert_eq(&V32::one(), &l2.get::<meter>());
+        Test::assert_eq(&V32::one(), &l1.get::<kilometer>());
+        Test::assert_eq(&V32::from_f64(0.001).unwrap(), &l2.get::<kilometer>());
+        Test::assert_eq(&V32::one(), &m1.get::<kilogram>());
     }
 
     #[test]
     fn coefficient() {
-        Test::assert_eq(&V::from_f64(1000.0).unwrap(),
-            &<kilometer as Conversion<V>>::coefficient().value());
-        Test::assert_eq(&V::one(), &<meter as Conversion<V>>::coefficient().value());
-        Test::assert_eq(&V::one(), &<kilogram as Conversion<V>>::coefficient().value());
-        Test::assert_eq(&V::from_f64(5.0 / 9.0).unwrap(),
-            &<degree_fahrenheit as Conversion<V>>::coefficient().value());
+        Test::assert_eq(&V32::from_f64(1000.0).unwrap(),
+            &<kilometer as Conversion<V32>>::coefficient().value());
+        Test::assert_eq(&V32::one(), &<meter as Conversion<V32>>::coefficient().value());
+        Test::assert_eq(&V32::one(), &<kilogram as Conversion<V32>>::coefficient().value());
+        Test::assert_eq(&V32::from_f64(5.0 / 9.0).unwrap(),
+            &<degree_fahrenheit as Conversion<V32>>::coefficient().value());
     }
 
     #[test]
     fn constant() {
         Test::assert_eq(&V::zero(),
             &<kilogram as Conversion<V>>::constant(ConstantOp::Add).value());
-        Test::assert_eq(&V::from_f64(459.67).unwrap(),
-            &<degree_fahrenheit as Conversion<V>>::constant(ConstantOp::Add).value());
+        Test::assert_eq(&V32::from_f64(459.67).unwrap(),
+            &<degree_fahrenheit as Conversion<V32>>::constant(ConstantOp::Add).value());
     }
 
     #[cfg(feature = "std")]
     #[test]
     fn debug_fmt() {
         assert_eq!(
-            format!("{:?} m^1", V::one()),
-            format!("{:?}", Length::new::<meter>(V::one())));
+            format!("{:?} m^1", V32::one()),
+            format!("{:?}", Length::new::<meter>(V32::one())));
         assert_eq!(
-            format!("{:?} m^-1", V::one()),
-            format!("{:?}", V::one() / Length::new::<meter>(V::one())));
+            format!("{:?} m^-1", V32::one()),
+            format!("{:?}", V32::one() / Length::new::<meter>(V32::one())));
         assert_eq!(
-            format!("{:.2?} m^1", V::one()),
-            format!("{:.2?}", Length::new::<meter>(V::one())));
+            format!("{:.2?} m^1", V32::one()),
+            format!("{:.2?}", Length::new::<meter>(V32::one())));
         assert_eq!(
-            format!("{:?} m^1 kg^1", V::from_f64(1.23).unwrap()),
-            format!("{:?}", Length::new::<meter>(V::from_f64(1.23).unwrap()) * Mass::new::<kilogram>(V::one())));
+            format!("{:?} m^1 kg^1", V32::from_f64(1.23).unwrap()),
+            format!("{:?}", Length::new::<meter>(V32::from_f64(1.23).unwrap()) * Mass::new::<kilogram>(V32::one())));
     }
 }
 
@@ -146,9 +147,9 @@ mod float {
         types: Float;
 
         use crate::tests::*;
-		use crate::tests::{geometry::length::Length, common::mass::Mass};
+        use crate::tests::quantities::f32::{geometry::Length, common::Mass};
 
-        Q!(crate::tests, V);
+        Q!(crate::tests, super::quantities::f32::V);
 
         #[test]
         fn floor() {

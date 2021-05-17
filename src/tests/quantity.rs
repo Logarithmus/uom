@@ -1,41 +1,43 @@
 //! Tests for the `quantity!` macro.
 
 storage_types! {
-    use crate::tests::*;
+	use crate::tests::*;
+	use crate::tests::quantity::f32::V as V32;
+	use crate::num_traits::cast::FromPrimitive;
 
-    mod f { Q!(crate::tests, super::V); }
-    mod k { Q!(crate::tests, super::V, (kilometer, kilogram, kelvin)); }
+    mod f { Q!(crate::tests, crate::tests::quantity::f32::V); }
+    mod k { Q!(crate::tests, crate::tests::quantity::f32::V, (kilometer, kilogram, kelvin)); }
 
     #[test]
     fn new() {
-        let l1 = k::Length::new::<kilometer>(V::one());
-        let l2 = k::Length::new::<meter>(V::one());
-        let m1 = k::Mass::new::<kilogram>(V::one());
+        let l1 = k::Length::new::<kilometer>(V32::one());
+        let l2 = k::Length::new::<meter>(V32::one());
+        let m1 = k::Mass::new::<kilogram>(V32::one());
 
-        Test::assert_eq(&V::one(), &l1.value);
-        Test::assert_eq(&V::from_f64(1.0_E-3).unwrap(), &l2.value);
-        Test::assert_eq(&V::one(), &m1.value);
+        Test::assert_eq(&V32::one(), &l1.value);
+        Test::assert_eq(&V32::from_f64(1.0_E-3).unwrap(), &l2.value);
+        Test::assert_eq(&V32::one(), &m1.value);
     }
 
     #[test]
     fn get() {
-        let l1 = k::Length::new::<kilometer>(V::one());
-        let l2 = k::Length::new::<meter>(V::one());
-        let m1 = k::Mass::new::<kilogram>(V::one());
+        let l1 = k::Length::new::<kilometer>(V32::one());
+        let l2 = k::Length::new::<meter>(V32::one());
+        let m1 = k::Mass::new::<kilogram>(V32::one());
 
-        Test::assert_eq(&V::from_f64(1000.0).unwrap(), &l1.get::<meter>());
-        Test::assert_eq(&V::one(), &l2.get::<meter>());
-        Test::assert_eq(&V::one(), &l1.get::<kilometer>());
-        Test::assert_eq(&V::from_f64(0.001).unwrap(), &l2.get::<kilometer>());
-        Test::assert_eq(&V::one(), &m1.get::<kilogram>());
+        Test::assert_eq(&V32::from_f64(1000.0).unwrap(), &l1.get::<meter>());
+        Test::assert_eq(&V32::one(), &l2.get::<meter>());
+        Test::assert_eq(&V32::one(), &l1.get::<kilometer>());
+        Test::assert_eq(&V32::from_f64(0.001).unwrap(), &l2.get::<kilometer>());
+        Test::assert_eq(&V32::one(), &m1.get::<kilogram>());
     }
 
     #[test]
     fn from_str() {
-        let l1 = k::Length::new::<meter>(V::one());
-        let l2 = k::Length::new::<kilometer>(V::one());
-        let m1 = k::Mass::new::<kilogram>(V::from_f64(1.0E3).unwrap());
-        let m2 = k::Mass::new::<kilogram>(V::from_f64(1.0E-3).unwrap());
+        let l1 = k::Length::new::<meter>(V32::one());
+        let l2 = k::Length::new::<kilometer>(V32::one());
+        let m1 = k::Mass::new::<kilogram>(V32::from_f64(1.0E3).unwrap());
+        let m2 = k::Mass::new::<kilogram>(V32::from_f64(1.0E-3).unwrap());
 
         Test::assert_eq(&"1 m".parse::<k::Length>().unwrap(), &l1);
         Test::assert_eq(&"1 meter".parse::<k::Length>().unwrap(), &l1);
@@ -54,21 +56,21 @@ storage_types! {
     #[cfg(feature = "autoconvert")]
     quickcheck! {
         #[allow(trivial_casts)]
-        fn add(l: A<V>, r: A<V>) -> bool {
+        fn add(l: A<V32>, r: A<V32>) -> bool {
             Test::approx_eq(&k::Length::new::<meter>(&*l + &*r),
                 &(k::Length::new::<meter>((*l).clone())
                     + f::geometry::Length::new::<meter>((*r).clone())))
         }
 
         #[allow(trivial_casts)]
-        fn sub(l: A<V>, r: A<V>) -> bool {
+        fn sub(l: A<V32>, r: A<V32>) -> bool {
             Test::approx_eq(&k::Length::new::<meter>(&*l - &*r),
                 &(k::Length::new::<meter>((*l).clone())
                     - f::geometry::Length::new::<meter>((*r).clone())))
         }
 
         #[allow(trivial_casts)]
-        fn mul_quantity(l: A<V>, r: A<V>) -> bool {
+        fn mul_quantity(l: A<V32>, r: A<V32>) -> bool {
             Test::approx_eq(&/*Area::new::<square_meter>*/(&*l * &*r),
                     &(f::geometry::Length::new::<meter>((*l).clone())
                         * k::Length::new::<meter>((*r).clone())).value)
@@ -81,8 +83,8 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn div_quantity(l: A<V>, r: A<V>) -> TestResult {
-            if *r == V::zero() {
+        fn div_quantity(l: A<V32>, r: A<V32>) -> TestResult {
+            if *r == V32::zero() {
                 return TestResult::discard();
             }
 
@@ -94,8 +96,8 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn rem(l: A<V>, r: A<V>) -> TestResult {
-            if *r == V::zero() {
+        fn rem(l: A<V32>, r: A<V32>) -> TestResult {
+            if *r == V32::zero() {
                 return TestResult::discard();
             }
 
@@ -106,7 +108,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn eq(l: A<V>, r: A<V>) -> bool {
+        fn eq(l: A<V32>, r: A<V32>) -> bool {
             let a = *l == *r;
             let b = f::geometry::Length::new::<meter>((*l).clone())
                 == k::Length::new::<meter>((*r).clone());
@@ -117,7 +119,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn ne(l: A<V>, r: A<V>) -> bool {
+        fn ne(l: A<V32>, r: A<V32>) -> bool {
             let a = *l != *r;
             let b = f::geometry::Length::new::<meter>((*l).clone())
                 != k::Length::new::<meter>((*r).clone());
@@ -128,7 +130,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn partial_cmp(l: A<V>, r: A<V>) -> bool {
+        fn partial_cmp(l: A<V32>, r: A<V32>) -> bool {
             let a = (*l).partial_cmp(&*r);
             let b = f::geometry::Length::new::<meter>((*l).clone()).partial_cmp(
                 &k::Length::new::<meter>((*r).clone()));
@@ -139,7 +141,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn lt(l: A<V>, r: A<V>) -> bool {
+        fn lt(l: A<V32>, r: A<V32>) -> bool {
             let a = (*l).lt(&*r);
             let b = f::geometry::Length::new::<meter>((*l).clone()).lt(
                 &k::Length::new::<meter>((*r).clone()));
@@ -150,7 +152,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn le(l: A<V>, r: A<V>) -> bool {
+        fn le(l: A<V32>, r: A<V32>) -> bool {
             let a = (*l).le(&*r);
             let b = f::geometry::Length::new::<meter>((*l).clone()).le(
                 &k::Length::new::<meter>((*r).clone()));
@@ -161,7 +163,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn gt(l: A<V>, r: A<V>) -> bool {
+        fn gt(l: A<V32>, r: A<V32>) -> bool {
             let a = (*l).gt(&*r);
             let b = f::geometry::Length::new::<meter>((*l).clone()).gt(
                 &k::Length::new::<meter>((*r).clone()));
@@ -172,7 +174,7 @@ storage_types! {
         }
 
         #[allow(trivial_casts)]
-        fn ge(l: A<V>, r: A<V>) -> bool {
+        fn ge(l: A<V32>, r: A<V32>) -> bool {
             let a = (*l).ge(&*r);
             let b = f::geometry::Length::new::<meter>((*l).clone()).ge(
                 &k::Length::new::<meter>((*r).clone()));
@@ -208,24 +210,26 @@ mod fmt {
 
     storage_types! {
         use crate::tests::*;
+		use crate::tests::quantity::f32::V as V32;
+		
 
-        mod f { Q!(crate::tests, super::V); }
+        mod f { Q!(crate::tests, crate::tests::quantity::f32::V); }
 
         quickcheck! {
             #[allow(trivial_casts)]
-            fn display(v: A<V>) -> bool {
+            fn display(v: A<V32>) -> bool {
                 test_format!(v, "");
             }
 
             #[allow(trivial_casts)]
-            fn debug(v: A<V>) -> bool {
+            fn debug(v: A<V32>) -> bool {
                 test_format!(v, "?");
             }
         }
 
         #[test]
         fn round_trip() {
-            let l = f::geometry::Length::new::<meter>(V::one());
+            let l = f::geometry::Length::new::<meter>(V32::one());
             let s1 = &format!("{}",
                 l.clone().into_format_args(kilometer, DisplayStyle::Abbreviation));
             assert_eq!(s1.parse::<f::geometry::Length>(), Ok(l.clone()));
@@ -239,17 +243,18 @@ mod fmt {
             types: Float;
 
             use crate::tests::*;
+			use crate::tests::quantity::f32::V as V32;
 
-            mod f { Q!(crate::tests, super::V); }
+            mod f { Q!(crate::tests, crate::tests::quantity::f32::V); }
 
             quickcheck! {
                 #[allow(trivial_casts)]
-                fn lower_exp(v: A<V>) -> bool {
+                fn lower_exp(v: A<V32>) -> bool {
                     test_format!(v, "e");
                 }
 
                 #[allow(trivial_casts)]
-                fn upper_exp(v: A<V>) -> bool {
+                fn upper_exp(v: A<V32>) -> bool {
                     test_format!(v, "E");
                 }
             }
@@ -262,27 +267,28 @@ mod fmt {
             types: PrimInt, BigInt, BigUint;
 
             use crate::tests::*;
+			use crate::tests::quantity::f32::V as V32;
 
-            mod f { Q!(crate::tests, super::V); }
+            mod f { Q!(crate::tests, crate::tests::quantity::f32::V); }
 
             quickcheck! {
                 #[allow(trivial_casts)]
-                fn binary(v: A<V>) -> bool {
+                fn binary(v: A<V32>) -> bool {
                     test_format!(v, "b");
                 }
 
                 #[test]
-                fn lower_hex(v: A<V>) -> bool {
+                fn lower_hex(v: A<V32>) -> bool {
                     test_format!(v, "x");
                 }
 
                 #[test]
-                fn octal(v: A<V>) -> bool {
+                fn octal(v: A<V32>) -> bool {
                     test_format!(v, "o");
                 }
 
                 #[test]
-                fn upper_hex(v: A<V>) -> bool {
+                fn upper_hex(v: A<V32>) -> bool {
                     test_format!(v, "X");
                 }
             }
@@ -296,13 +302,14 @@ mod non_big {
         types: Float, PrimInt, Rational, Rational32, Rational64;
 
         use crate::tests::*;
+		use crate::tests::quantity::f32::V as V32;
 
-        mod f { Q!(crate::tests, super::V); }
-        mod k { Q!(crate::tests, super::V, (kilometer, kilogram, kelvin)); }
+        mod f { Q!(crate::tests, crate::tests::quantity::f32::V); }
+        mod k { Q!(crate::tests, crate::tests::quantity::f32::V, (kilometer, kilogram, kelvin)); }
 
         quickcheck! {
             #[allow(trivial_casts)]
-            fn add_assign(l: A<V>, r: A<V>) -> bool {
+            fn add_assign(l: A<V32>, r: A<V32>) -> bool {
                 let mut f = *l;
                 let mut v = k::Length::new::<meter>(*l);
 
@@ -313,7 +320,7 @@ mod non_big {
             }
 
             #[allow(trivial_casts)]
-            fn sub_assign(l: A<V>, r: A<V>) -> bool {
+            fn sub_assign(l: A<V32>, r: A<V32>) -> bool {
                 let mut f = *l;
                 let mut v = k::Length::new::<meter>(*l);
 
@@ -324,8 +331,8 @@ mod non_big {
             }
 
             #[allow(trivial_casts)]
-            fn rem_assign(l: A<V>, r: A<V>) -> TestResult {
-                if *r == V::zero() {
+            fn rem_assign(l: A<V32>, r: A<V32>) -> TestResult {
+                if *r == V32::zero() {
                     return TestResult::discard();
                 }
 
@@ -346,9 +353,10 @@ mod float {
         types: Float;
 
         use crate::tests::*;
+		use crate::tests::quantity::f32::V as V32;
 
-        mod f { Q!(crate::tests, super::V); }
-        mod k { Q!(crate::tests, super::V, (kilometer, kilogram, kelvin)); }
+        mod f { Q!(crate::tests, crate::tests::quantity::f32::V); }
+        mod k { Q!(crate::tests, crate::tests::quantity::f32::V, (kilometer, kilogram, kelvin)); }
 
         #[test]
         fn floor() {
@@ -458,7 +466,7 @@ mod float {
         #[cfg(feature = "std")]
         quickcheck! {
             #[allow(trivial_casts)]
-            fn hypot_same(l: V, r: V) -> bool {
+            fn hypot_same(l: V32, r: V32) -> bool {
                 Test::eq(&l.hypot(r),
                     &f::geometry::Length::new::<meter>(l).hypot(f::geometry::Length::new::<meter>(r)).get::<meter>())
             }
@@ -467,7 +475,7 @@ mod float {
         #[cfg(all(feature = "std", feature = "autoconvert"))]
         quickcheck! {
             #[allow(trivial_casts)]
-            fn hypot_mixed(l: V, r: V) -> bool {
+            fn hypot_mixed(l: V32, r: V32) -> bool {
                 let fk = Test::approx_eq(&l.hypot(r),
                     &f::geometry::Length::new::<meter>(l).hypot(k::Length::new::<meter>(r)).get::<meter>());
                 let kf = Test::approx_eq(&l.hypot(r),
