@@ -34,9 +34,9 @@
 #![cfg_attr(not(all(feature = "si", feature = "f32")), doc = " ```rust,ignore")]
 //! extern crate uom;
 //!
-//! use uom::si::f32::*;
-//! use uom::si::length::kilometer;
-//! use uom::si::time::second;
+//! use uom::si::f32::{geometry::Length, common::Time};
+//! use uom::si::geometry::length::kilometer;
+//! use uom::si::common::time::second;
 //!
 //! fn main() {
 //!     let length = Length::new::<kilometer>(5.0);

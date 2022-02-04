@@ -1,10 +1,10 @@
 //! Tests for `uom` macros.
 
+use self::common::mass::kilogram;
 #[allow(unused_imports)]
 use self::fmt::{Arguments, QuantityArguments};
-use self::length::{kilometer, meter};
-use self::mass::kilogram;
-use self::thermodynamic_temperature::{degree_fahrenheit, kelvin};
+use self::geometry::length::{kilometer, meter};
+use self::thermal::thermodynamic_temperature::{degree_fahrenheit, kelvin};
 use crate::fmt::DisplayStyle;
 use crate::lib::fmt::Debug;
 use crate::lib::marker::PhantomData;
@@ -17,51 +17,63 @@ use quickcheck::TestResult;
 use typenum::{N1, P1, P2, P3, Z0};
 
 #[macro_use]
-mod length {
-    quantity! {
-        quantity: Length; "length";
-        dimension: Q<P1, Z0, Z0>;
-        units {
-            @kilometer: 1.0_E3; "km", "kilometer", "kilometers";
-            @meter: 1.0_E0; "m", "meter", "meters";
+mod geometry {
+    pub mod length {
+        quantity! {
+            quantity: Length; "length";
+            dimension: Q<P1, Z0, Z0>;
+            units {
+                @kilometer: 1.0_E3; "km", "kilometer", "kilometers";
+                @meter: 1.0_E0; "m", "meter", "meters";
+            }
         }
     }
 }
 
 #[macro_use]
-mod mass {
-    quantity! {
-        quantity: Mass; "mass";
-        dimension: Q<Z0, P1, Z0>;
-        units {
-            @kilogram: 1.0_E0; "kg", "kilogram", "kilograms";
+mod common {
+    pub mod mass {
+        quantity! {
+            quantity: Mass; "mass";
+            dimension: Q<Z0, P1, Z0>;
+            units {
+                @kilogram: 1.0_E0; "kg", "kilogram", "kilograms";
+            }
         }
     }
 }
 
 #[macro_use]
-mod thermodynamic_temperature {
-    quantity! {
-        quantity: ThermodynamicTemperature; "thermodynamic temperature";
-        dimension: Q<Z0, Z0, P1>;
-        units {
-            @kelvin: 1.0_E0; "K", "kelvin", "kelvins";
-            @degree_fahrenheit: 5.0_E0 / 9.0_E0, 459.67_E0; "°F", "degree Fahrenheit",
-                "degrees Fahrenheit";
+mod thermal {
+    pub mod thermodynamic_temperature {
+        quantity! {
+            quantity: ThermodynamicTemperature; "thermodynamic temperature";
+            dimension: Q<Z0, Z0, P1>;
+            units {
+                @kelvin: 1.0_E0; "K", "kelvin", "kelvins";
+                @degree_fahrenheit: 5.0_E0 / 9.0_E0, 459.67_E0; "°F", "degree Fahrenheit",
+                    "degrees Fahrenheit";
+            }
         }
     }
 }
 
 system! {
     quantities: Q {
-        length: meter, L;
-        mass: kilogram, M;
-        thermodynamic_temperature: kelvin, Th;
+        geometry::length: meter, L;
+        common::mass: kilogram, M;
+        thermal::thermodynamic_temperature: kelvin, Th;
     }
     units: U {
-        mod length::Length,
-        mod mass::Mass,
-        mod thermodynamic_temperature::ThermodynamicTemperature,
+        geometry {
+            mod length::Length,
+        },
+        common {
+            mod mass::Mass,
+        },
+        thermal {
+            mod thermodynamic_temperature::ThermodynamicTemperature,
+        },
     }
 }
 

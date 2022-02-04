@@ -1,10 +1,10 @@
 //! Example showing how to use the pre-built SI system.
 
 use uom::fmt::DisplayStyle::Abbreviation;
+use uom::si::common::time::second;
 use uom::si::f32::*;
-use uom::si::length::{centimeter, kilometer, meter};
-use uom::si::time::second;
-use uom::si::velocity::{kilometer_per_second, meter_per_second};
+use uom::si::geometry::length::{centimeter, kilometer, meter};
+use uom::si::kinematics::velocity::{kilometer_per_second, meter_per_second};
 
 fn main() {
     // Setup length and time quantities using different units.

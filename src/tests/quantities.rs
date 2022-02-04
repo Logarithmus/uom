@@ -1,18 +1,19 @@
 //! Tests for the `$quantities!` macro created by the `system!` macro.
 
 use crate::tests::*;
+use crate::tests::{common::mass, geometry::length};
 
 // Module level constant to verify that creation is possible.
 #[allow(dead_code)]
 #[allow(trivial_numeric_casts)]
 #[cfg(feature = "f32")]
-const LENGTH: length::Length<U<f32>, f32> =
+const LENGTH: geometry::length::Length<U<f32>, f32> =
     Quantity { dimension: PhantomData, units: PhantomData, value: 1.0 };
 
 #[test]
 fn description() {
-    assert_eq!("length", length::description());
-    assert_eq!("mass", mass::description());
+    assert_eq!("length", geometry::length::description());
+    assert_eq!("mass", common::mass::description());
 }
 
 #[test]
@@ -38,16 +39,16 @@ fn plural() {
 
 #[test]
 fn units_abbreviation() {
-    assert_eq!("km", length::Units::kilometer(kilometer).abbreviation());
-    assert_eq!("m", length::Units::meter(meter).abbreviation());
-    assert_eq!("kg", mass::Units::kilogram(kilogram).abbreviation());
+    assert_eq!("km", geometry::length::Units::kilometer(kilometer).abbreviation());
+    assert_eq!("m", geometry::length::Units::meter(meter).abbreviation());
+    assert_eq!("kg", common::mass::Units::kilogram(kilogram).abbreviation());
 }
 
 #[test]
 fn units_singular() {
-    assert_eq!("kilometer", length::Units::kilometer(kilometer).singular());
-    assert_eq!("meter", length::Units::meter(meter).singular());
-    assert_eq!("kilogram", mass::Units::kilogram(kilogram).singular());
+    assert_eq!("kilometer", geometry::length::Units::kilometer(kilometer).singular());
+    assert_eq!("meter", geometry::length::Units::meter(meter).singular());
+    assert_eq!("kilogram", common::mass::Units::kilogram(kilogram).singular());
 }
 
 #[test]
@@ -68,7 +69,9 @@ fn units() {
 storage_types! {
     use crate::tests::*;
 
-    Q!(crate::tests, V);
+    Q!(crate::tests, super::V);
+
+    use self::{geometry::Length, common::Mass};
 
     #[test]
     fn struct_literal() {
@@ -145,7 +148,9 @@ mod float {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+        Q!(crate::tests, super::V);
+
+        use self::{geometry::Length, common::Mass};
 
         #[test]
         fn floor() {

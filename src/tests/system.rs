@@ -2,13 +2,19 @@
 
 storage_types! {
     use crate::tests::*;
+    use crate::tests::{
+        geometry::length,
+        thermal::thermodynamic_temperature,
+    };
 
     type MeterKelvinBase = dyn Units<V, length = meter, mass = kilogram,
         thermodynamic_temperature = kelvin>;
     type KilometerFahrenheitBase = dyn Units<V, length = kilometer, mass = kilogram,
         thermodynamic_temperature = degree_fahrenheit>;
 
-    Q!(crate::tests, V);
+    Q!(crate::tests, super::V);
+
+    use self::geometry::Length;
 
     #[test]
     fn zero() {
@@ -250,7 +256,10 @@ mod prim_int {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         quickcheck! {
             #[allow(trivial_casts)]
@@ -276,7 +285,10 @@ mod float {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         #[test]
         fn fp_categories() {
@@ -414,7 +426,10 @@ mod signed {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         quickcheck! {
             #[allow(trivial_casts)]
@@ -444,7 +459,10 @@ mod non_ratio {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         #[test]
         fn default() {
@@ -459,7 +477,10 @@ mod non_big {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         quickcheck! {
             #[allow(trivial_casts)]
@@ -534,7 +555,10 @@ mod primitive {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         #[test]
         fn sum() {
@@ -581,7 +605,10 @@ mod fixed {
 
         use crate::tests::*;
 
-        Q!(crate::tests, V);
+
+        Q!(crate::tests, super::V);
+
+        use self::geometry::Length;
 
         quickcheck! {
             #[allow(trivial_casts)]

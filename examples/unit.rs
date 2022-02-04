@@ -8,11 +8,11 @@ extern crate uom;
 
 use uom::fmt::DisplayStyle::*;
 use uom::si::f32::*;
-use uom::si::length::meter;
+use uom::si::geometry::length::meter;
 
 unit! {
     system: uom::si;
-    quantity: uom::si::length;
+    quantity: uom::si::geometry::length;
 
     @smoot: 1.702; "smoot", "smoot", "smoots";
 }

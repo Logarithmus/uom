@@ -17,7 +17,22 @@ autotests = true
 autobenches = true
 
 [package.metadata.docs.rs]
-features = ["usize", "u32", "u64", "isize", "i32", "i64", "bigint", "biguint", "rational", "rational32", "rational64", "bigrational", "use_serde"]
+features = [
+    "usize",
+    "u32",
+    "u64",
+    "isize",
+    "i32",
+    "i64",
+    "bigint",
+    "biguint",
+    "rational",
+    "rational32",
+    "rational64",
+    "bigrational",
+    "use_serde",
+    "si-all",
+]
 
 [package.metadata]
 msrv = "1.43.0"
@@ -26,16 +41,14 @@ msrv = "1.43.0"
 maintenance = { status = "actively-developed" }
 
 [workspace]
-members = [
-    "tests/feature_check",
-    "uom-macros",
-    "tests/edition_check",
-]
+members = ["tests/feature_check", "uom-macros", "tests/edition_check"]
 
 [dependencies]
 num-traits = { version = "0.2", default-features = false }
 num-rational = { version = "0.4", optional = true, default-features = false }
-num-bigint = { version = "0.4", optional = true, default-features = false, features = ["std"] }
+num-bigint = { version = "0.4", optional = true, default-features = false, features = [
+    "std",
+] }
 serde = { version = "1.0", optional = true, default-features = false }
 typenum = "1.13"
 
@@ -46,7 +59,7 @@ serde_json = "1.0"
 static_assertions = "1.1"
 
 [features]
-default = ["autoconvert", "f32", "f64", "si", "std"]
+default = ["autoconvert", "f32", "f64", "std"]
 autoconvert = []
 usize = ["rational-support"]
 u8 = ["rational-support"]
@@ -68,6 +81,32 @@ rational64 = ["rational-support"]
 bigrational = ["bigint-support"]
 f32 = []
 f64 = []
+si-geometry = ["si"]
+si-kinematics = ["si"]
+si-dynamics = ["si"]
+si-electricity = ["si"]
+si-magnetism = ["si"]
+si-thermal = ["si"]
+si-optics = ["si"]
+si-chemistry = ["si"]
+si-energy = ["si"]
+si-information = ["si"]
+si-common = ["si"]
+si-all = [
+    "si-energy",
+    "si-geometry",
+    "si-kinematics",
+    "si-dynamics",
+    "si-electricity",
+    "si-magnetism",
+    "si-thermal",
+    "si-optics",
+    "si-chemistry",
+    "si-energy",
+    "si-information",
+    "si-common",
+]
+# Internal feature which is needed for all si-* features
 si = []
 std = ["num-traits/std"]
 # The try-from feature is deprecated and will be removed in a future release of uom. Functionality
@@ -84,16 +123,16 @@ bigint-support = ["num-bigint", "num-rational/num-bigint-std"]
 
 [[example]]
 name = "base"
-required-features = ["autoconvert", "f32", "si"]
+required-features = ["autoconvert", "f32", "si-geometry", "si-common"]
 
 [[example]]
 name = "mks"
-required-features = ["f32"]
+required-features = ["f32", "si-geometry"]
 
 [[example]]
 name = "si"
-required-features = ["f32", "si"]
+required-features = ["f32", "si-geometry", "si-common", "si-kinematics"]
 
 [[example]]
 name = "unit"
-required-features = ["f32", "si"]
+required-features = ["f32", "si-geometry"]
